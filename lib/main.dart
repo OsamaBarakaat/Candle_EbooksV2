@@ -1,0 +1,52 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
+import 'contact_us.dart';
+import 'api.dart';
+import 'book/binding.dart';
+import 'book/view/details_screen.dart';
+import 'book/view/home_book.dart';
+import 'firebaes/books_screen.dart';
+import 'firebaes/hos_screen.dart';
+import 'login&register.dart';
+import 'read_book_blind.dart';
+import 'read_book.dart';
+void main()async {
+  WidgetsFlutterBinding.ensureInitialized();
+  //await Firebase.initializeApp();
+
+  runApp(MyApp());
+}
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialBinding: Binding(),
+      home: SplashScreen() ,
+
+    );
+  }
+}
+class SplashScreen extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSplashScreen(
+      splash: Lottie.asset('assets/images/2.json'),
+      backgroundColor: Colors.blue,
+      nextScreen: login(),
+      splashIconSize: 300,
+      duration: 4000,
+      splashTransition: SplashTransition.fadeTransition,
+      pageTransitionType: PageTransitionType.leftToRightWithFade,
+      animationDuration: const Duration(seconds: 1),
+    );
+  }
+}
