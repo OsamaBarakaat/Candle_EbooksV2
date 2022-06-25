@@ -1,53 +1,35 @@
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:audioplayers/audioplayers.dart';
 
-class PdfViewerPage2 extends StatefulWidget {
+import 'micScreen.dart';
+class PdfViewerPage extends StatefulWidget  {
   @override
   _PdfViewerPageState2 createState() => _PdfViewerPageState2();
 }
 
-class _PdfViewerPageState2 extends State<PdfViewerPage2> {
+class _PdfViewerPageState2 extends State<PdfViewerPage> {
+
   String? localPath;
-  String? localsound;
   final audioPlayer = AudioPlayer();
   bool isPlaying = false;
-
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
   final pdfBackend = Get.arguments! as String;
+
+  @override
   void dispose() {
     audioPlayer.dispose();
     super.dispose();
   }
 
-  @override
-  void initState() {
-    audioPlayer.onPlayerStateChanged.listen((state) {
-      setState(() {
-        isPlaying = state == PlayerState.playing;
-      });
-    });
-    // TODO: implement initState
-    super.initState();
-    loadPDF().then((value) {
-      setState(() {
-        localPath = value;
-      });
-    });
-    loadSound().then((value) {
-      setState(() {
-        localsound = value;
-        print(localsound);
-        audioPlayer.setSourceDeviceFile(localsound!);
-      });
-    });
-  }
   Future<String> loadSound() async {
-    String Sound_URL = "https://candle-ebooks.herokuapp.com/api/books/audio/6";
+    String Sound_URL = "https://candle-ebooks.herokuapp.com/api/books/audio/"+MyAppState.valueMap!["id"].toString();
 
     var response = await http.get(Uri.parse(Sound_URL));
 
@@ -56,6 +38,42 @@ class _PdfViewerPageState2 extends State<PdfViewerPage2> {
     file.writeAsBytesSync(response.bodyBytes, flush: true);
     return file.path;
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    super.initState();
+    loadPDF().then((value) {
+      setState(() {
+        localPath = value;
+      });
+    });
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        isPlaying = state == PlayerState.playing;
+      });
+    });
+    audioPlayer.onDurationChanged.listen((newDuration) {
+      setState(() {
+        duration = newDuration;
+      });
+    });
+    audioPlayer.onPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
+    loadSound().then((value) {
+      setState(() {
+        localPath = value;
+        print(localPath);
+        audioPlayer.setSourceDeviceFile(localPath!);
+      });
+    });
+    // audioPlayer.resume();
+  }
+
   Future<String> loadPDF() async {
     var response = await http.get(Uri.parse(pdfBackend));
 
@@ -64,6 +82,7 @@ class _PdfViewerPageState2 extends State<PdfViewerPage2> {
     file.writeAsBytesSync(response.bodyBytes, flush: true);
     return file.path;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +90,7 @@ class _PdfViewerPageState2 extends State<PdfViewerPage2> {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.black45 , Colors.blue],
+              colors: [Colors.black45, Colors.blue],
               begin: Alignment.bottomRight,
               end: Alignment.topLeft,
             ),
@@ -83,22 +102,28 @@ class _PdfViewerPageState2 extends State<PdfViewerPage2> {
         ),
         centerTitle: true,
       ),
-        body:InkWell(
-          onTap: ()async {
-      if (isPlaying) {
-        await audioPlayer.pause();
-      } else {
-        await audioPlayer.resume();
-      }},
-          child:localPath != null
-              ? PDFView(
-            filePath: localPath,
+      body: localPath != null
+            ? RaisedButton(
+        colorBrightness:Brightness.light,
+        onPressed:() {
+          if (isPlaying) {
+             audioPlayer.pause();
+          } else {
+             audioPlayer.resume();
+          }
+        },
+      // Toggle light when tapped.
 
-          ) : Center(child: CircularProgressIndicator()),
-        )
+              child: PDFView(
+                      filePath: localPath,
+                    ),
+            )
+
+
+
+            : Center(child: CircularProgressIndicator()),
+
     );
   }
 }
-// Timer(const Duration(seconds:2), () {
-// Uploadfile(filename);
-// });
+

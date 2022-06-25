@@ -40,7 +40,7 @@ class _loginState extends State<login> {
      await postdata();
       if (uservalid!.userValid){
         _formKey.currentState!.save();
-        Get.to(MicScreen1());
+        Get.to(MicScreen());
       }
     }
   }
@@ -49,7 +49,7 @@ class _loginState extends State<login> {
     if (isValid) {
       postreg();
       _formKey.currentState!.save();
-      Get.to(MicScreen1());
+      Get.to(login());
     }
   }
   @override
@@ -273,13 +273,10 @@ class _loginState extends State<login> {
       email.text ="guest${rng.nextInt(1000000)}@yahoo.com";
       password.text ="12345678";
       userName.text = "guest${rng.nextInt(1000000)}";
-
+      uservalid?.userValid = false;
     print(email);
     print(password);
     print(userName);
-
-
-    //
-    Get.to(MicScreen1());
+    Get.to(MicScreen());
   }
 }

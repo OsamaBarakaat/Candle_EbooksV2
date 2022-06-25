@@ -13,11 +13,14 @@ import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'book/view/home_book.dart';
 import 'contact_us.dart';
-class MicScreen1 extends StatefulWidget {
+class MicScreen extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
+
 }
-class _MyAppState extends State<MicScreen1> {
+
+class MyAppState extends State<MicScreen> {
+  static Map? valueMap;
   File? _audio;
   FlutterAudioRecorder2? _recorder;
   Recording? _recording;
@@ -41,6 +44,11 @@ class _MyAppState extends State<MicScreen1> {
       isRecord = true;
     });
   }
+  @override
+  void initState() {
+    TextToSpeech().speak("now you can ask for your favourite books "
+        "one tap to record and another tap to stop recording");
+    super.initState();}
   Future stopRecording() async {
     var result = await _recorder?.stop();
     setState(() {
@@ -52,9 +60,8 @@ class _MyAppState extends State<MicScreen1> {
       // this is what we need
     });
   }
-  Future Uploadfile(String filename) async {
+  static Future Uploadfile(String filename) async {
     var postUri =  Uri.parse("https://candle-ebooks.herokuapp.com/api/transcription/");
-
     http.MultipartRequest request =  http.MultipartRequest("POST", postUri);
     request.headers ['Content-Type']="multipart/form-data";
     request.headers ['Accept']="*/*";
@@ -62,21 +69,22 @@ class _MyAppState extends State<MicScreen1> {
     request.headers ['Connection']="keep-alive";
     http.MultipartFile multipartFile =  await http.MultipartFile.fromPath(
         'audio', filename);
-     request.files.add (multipartFile);
+    request.files.add (multipartFile);
     http.StreamedResponse response = await request.send();
     var responseData = await response.stream.toBytes();
-       var result = String.fromCharCodes(responseData);
+    var result = String.fromCharCodes(responseData);
     if(response.statusCode >=400) {
-         TextToSpeech().speak(
-             "Book not found Please try again");
-         Get.to(ContactUs());
-       }
-       else{
-      Map valueMap = json.decode(result);
-      print(valueMap["title"]);
-      String pdf = "https://candle-ebooks.herokuapp.com/api/books/content/"+valueMap["id"].toString();
-         Get.to(PdfViewerPage2(), arguments: pdf);
-       }
+      TextToSpeech().speak(
+          "Book not found Please try again"
+              "one tap on the bottom of the screen to record your request and another tap to go to mic screen");
+      Get.to(ContactUs());
+    }
+    else{
+      valueMap = json.decode(result);
+      print(valueMap!["title"]);
+      String pdf = "https://candle-ebooks.herokuapp.com/api/books/content/"+valueMap!["id"].toString();
+      Get.to(PdfViewerPage(), arguments: pdf);
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -130,22 +138,36 @@ class _MyAppState extends State<MicScreen1> {
                 Uploadfile(filename);
               });
             } else {
-              final aaaa= Directory("/storage/emulated/0/Android/data/com.example.hn.candle_ebookv2/files/candelrecords.wav");
-               aaaa.deleteSync(recursive: true);
+              try {
+                final aaaa = Directory(
+                    "/storage/emulated/0/Android/data/com.example.hn.candle_ebookv2/files/candelrecords.wav");
+                aaaa.deleteSync(recursive: true);
+              }
+              catch(e){print(e);}
               startRecording();
             }
           },
+    child: Container(
+    decoration: BoxDecoration(
+    image:DecorationImage(
+    image: NetworkImage("https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=928&q=80"),
+    fit: BoxFit.cover,
+    opacity: 0.4
+    )
+    ),
           child: Container(
             height: double.infinity,
             child: isRecord
                 ? Lottie.asset('assets/images/2887-listen-state.json')
                 : Center(
-                    child: Icon(
-                    Icons.mic,
-                    color: Colors.blue,
-                    size: 100,
-                  )),
+                child: Icon(
+                  Icons.mic,
+                  color: Colors.blue,
+                  size: 100,
+                )),
           ),
-        ));
+        )));
   }
 }
+
+

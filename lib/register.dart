@@ -139,7 +139,7 @@ class register extends StatelessWidget {
                       onPressed :()
                       {
                         Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => MicScreen1() ,
+                          builder: (context) => MicScreen() ,
                         ),);
                         print(emailregister.text);
                         print(passwordregister.text);

@@ -60,14 +60,12 @@ class BookController extends GetxController{
 
     http.Response response = await http.get(
         Uri.parse("https://candle-ebooks.herokuapp.com/api/books/search/$title"));
-
-    final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();;
+    final parsed = jsonDecode(response.body);
     print("oooooooooooooooooooooooooooo");
     print(parsed);
-
     try {
       isLoading(true);
-      bookModelSearch= BookModel.fromJson(parsed["Books"]);
+      bookModelSearch= BookModel.fromJson(parsed["Books"][0]);
 
 
       update();
@@ -79,11 +77,5 @@ class BookController extends GetxController{
       isLoading(false);
     }
   }
-
-
-
-
-
-
 
 }

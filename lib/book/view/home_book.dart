@@ -1,11 +1,18 @@
 import 'package:candle_ebookv2/book/models/book_model.dart';
+import 'package:candle_ebookv2/json.dart';
+import 'package:candle_ebookv2/login&register.dart';
 import '../../list_viewer.dart';
 import '../controller/book_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../search.dart';
 import 'details_screen.dart';
+import 'package:candle_ebookv2/remote_service.dart';
 class HomeBook extends GetWidget<BookController> {
+  LoginValid? user;
+  username ()  {
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +73,7 @@ class HomeBook extends GetWidget<BookController> {
                         ),
                       ),
                       Text(
-                        "Osama",
+                        uservalid?.userValid == true ? uservalid!.username :'Guest',
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w700,
@@ -106,7 +113,6 @@ class HomeBook extends GetWidget<BookController> {
                                       //await controller.getDetails(controller.books[i]!.isbn13.toString());
                                       //print("ooooooooooooooooooooooooooooooo");
                                       //print(controller.books[i]!.isbn13.toString());
-
                                       Get.to(DetailsBooks(book: BookModel.fromJson(controller.books.value[i]!.toJson())));
                                     },
                                     child: Row(
@@ -167,21 +173,28 @@ class HomeBook extends GetWidget<BookController> {
                                               ),
                                             ),
                                             SizedBox(height: 16),
-                                            Text(
-                                              controller.books.value[i]!.title,
-                                              style: TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.w500,
+                                            Container(
+                                              width:250,
+                                              child: Center(
+                                                child: Text(
+                                                  controller.books.value[i]!.title,
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                             SizedBox(
                                               height: 2,
                                             ),
-                                            Text(
-                                              controller.books.value[i]!.author,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w300,
+                                            Center(
+                                              child: Text(
+                                                controller.books.value[i]!.author,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w300,
+                                                ),
                                               ),
                                             )
                                           ],
@@ -215,13 +228,14 @@ class HomeBook extends GetWidget<BookController> {
                                 ),
                                 height: MediaQuery.of(context).size.height * 0.41,
                                 child: ListView.builder(
-                                  itemBuilder: (ctx, i) => GestureDetector(
+
+                                  itemBuilder: (ctx, i ) => GestureDetector(
                                     onTap: () async{
                                       //await controller.getDetails(controller.books[i]!.isbn13.toString());
                                       //print("ooooooooooooooooooooooooooooooo");
                                       //print(controller.books[i]!.isbn13.toString());
 
-                                      Get.to(DetailsBooks(book: BookModel.fromJson(controller.books.value[i]!.toJson())));
+                                      Get.to(DetailsBooks(book: BookModel.fromJson(controller.books.value[controller.books.value.length-1-i]!.toJson())));
                                     },
                                     child: Row(
                                       children: [
@@ -252,7 +266,7 @@ class HomeBook extends GetWidget<BookController> {
                                                     child: ClipRRect(
                                                       borderRadius: BorderRadius.circular(20),
                                                       child: Image.network(
-                                                        controller.books.value[i]!.cover,
+                                                        controller.books.value[controller.books.value.length-1-i]!.cover,
                                                         fit: BoxFit.fill,
                                                         width: 200,
                                                         height: 800,
@@ -281,21 +295,28 @@ class HomeBook extends GetWidget<BookController> {
                                               ),
                                             ),
                                             SizedBox(height: 16),
-                                            Text(
-                                              controller.books.value[i]!.title,
-                                              style: TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.w500,
+                                            Container(
+                                              width: 300,
+                                              child: Center(
+                                                child: Text(
+                                                  controller.books.value[controller.books.value.length-1-i]!.title,
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                             SizedBox(
                                               height: 2,
                                             ),
-                                            Text(
-                                              controller.books.value[i]!.author,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w300,
+                                            Center(
+                                              child: Text(
+                                                controller.books.value[controller.books.value.length-1-i]!.author,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w300,
+                                                ),
                                               ),
                                             )
                                           ],
@@ -323,5 +344,6 @@ class HomeBook extends GetWidget<BookController> {
     );
   }
 }
+
 
 

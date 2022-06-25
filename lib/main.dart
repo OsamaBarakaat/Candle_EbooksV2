@@ -15,7 +15,6 @@ import 'book/view/home_book.dart';
 import 'firebaes/books_screen.dart';
 import 'firebaes/hos_screen.dart';
 import 'login&register.dart';
-import 'read_book_blind.dart';
 import 'read_book.dart';
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();

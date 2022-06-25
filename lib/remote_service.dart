@@ -104,4 +104,24 @@ class RemoteService {
       return booksFromJson(json);
     }
   }
+  Future<Msg?> Req(String email , String password) async {
+    final response = await http.post(
+      Uri.parse(api_link+'requests/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        "Accept":  "/", "Accept-Encoding": "gzip, deflate, br",  "Connection": "keep-alive",
+      },
+      body: jsonEncode(<String, dynamic> {
+        'books_requested': email,
+        'user_id': 3
+      }),
+    );
+    if (response.statusCode >= 200 && response.statusCode < 400) {
+      var json = response.body;
+      print(json);
+      return msgFromJson(json);
+    }
+    return null;
+  }
 }
+

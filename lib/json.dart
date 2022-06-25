@@ -180,5 +180,36 @@ class Booking {
     "url": url,
   };
 }
+Requestbook requestFromJson(String str) => Requestbook.fromJson(json.decode(str));
+
+String requestToJson(Requestbook data) => json.encode(data.toJson());
+
+class Requestbook {
+  Requestbook({
+    required this.booksRequested,
+    required this.id,
+    required this.reqDate,
+    required this.userId,
+  });
+
+  String booksRequested;
+  int id;
+  String reqDate;
+  int userId;
+
+  factory Requestbook.fromJson(Map<String, dynamic> json) => Requestbook(
+    booksRequested: json["books_requested"],
+    id: json["id"],
+    reqDate: json["req_date"],
+    userId: json["user_id"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "books_requested": booksRequested,
+    "id": id,
+    "req_date": reqDate,
+    "user_id": userId,
+  };
+}
 
 
